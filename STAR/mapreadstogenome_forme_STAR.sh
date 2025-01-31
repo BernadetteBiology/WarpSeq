@@ -103,8 +103,8 @@ done
 calculate_resources() {
     echo "Calculating system resources..."
     TOTAL_CPUS=$(nproc)
-    PARALLEL_JOBS=$((TOTAL_CPUS / 2)-2) 
-    STAR_THREADS=$((TOTAL_CPUS / 2)-2) 
+    PARALLEL_JOBS=$((((TOTAL_CPUS / 2))-2)) 
+    STAR_THREADS=$((((TOTAL_CPUS / 2))-2)) 
     if [[ $STAR_THREADS -lt 1 ]]; then STAR_THREADS=1; fi
     if [[ $PARALLEL_JOBS -lt 1 ]]; then PARALLEL_JOBS=1; fi
     echo "Using $PARALLEL_JOBS parallel jobs and $STAR_THREADS STAR threads."
