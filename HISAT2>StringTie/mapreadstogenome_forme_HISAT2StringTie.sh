@@ -13,7 +13,7 @@
 	#  a3. forward and reverse reads should be labeled the exact same apart from R1 or R2.
  # b. The reference genome/chromosome level assembly with a "genome.fna" or "genome.fasta" extension.
  # c. Optional: A chromosome level assembly annotation file with a ".gff" or ".gtf" extension. 
- # d. The adapter file from Trimmomatic. This program currently is set up to use TruSeq3-PE-2.fa.
+ # d. The adapter and jar file from Trimmomatic. This program currently is set up to use TruSeq3-PE-2.fa and trimmomatic-0.39.jar (but this can be changed).
  # e. The prepDE.py3 script from StringTie.
  # f. This program.
  # g. No other files with these extensions or labels!
@@ -28,6 +28,7 @@
   	# assemblyannotation_fish.gff (optional)
   	# TruSeq3-PE-2.fa
 	# prepDE.py3
+ 	# trimmomatic-0.39.jar
  # Important:
    	# This program calculates the number of processing units available, and uses 2 less than 50%. If you would like to changes this alter $PARALLEL_JOBS and/or $STAR_THREADS. 
 
@@ -47,7 +48,7 @@ usage() {
     echo "Options:"
     echo "  -t, --trimmomatic PATH    Path to Trimmomatic JAR file (default: $DEFAULT_TRIMMOMATIC_JAR)"
     echo "  -i, --illumina            Trimmomatic adapter clip parameters (default: $DEFAULT_ILLUMINACLIP)"
-	echo "  -r, --trim                Trimmomatic trimming parameters (default: $DEFAULT_TRIM_OPTS)"
+    echo "  -r, --trim                Trimmomatic trimming parameters (default: $DEFAULT_TRIM_OPTS)"
     echo "  -g, --genome-dir DIR      Directory (output) for STAR genome index (default: $DEFAULT_GENOME_DIR)"
     echo "  -o, --output-dir DIR      Directory (output) for output files (default: $DEFAULT_OUTPUT_DIR)"
     echo "  -l, --log-dir DIR         Directory for log files (default: $DEFAULT_LOG_DIR)"
