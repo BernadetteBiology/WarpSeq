@@ -13,7 +13,7 @@
 	#  a3. forward and reverse reads should be labeled the exact same apart from R1 or R2.
  # b. The reference genome/chromosome level assembly with a "genome.fna" or "genome.fasta" extension.
  # c. Having a chromosome level assembly annotation file with a ".gff" or ".gtf" extension. 
- # d. The adapter file from Trimmomatic. This program currently is set up to use TruSeq3-PE-2.fa.
+ # d. The adapter and jar file from Trimmomatic. This program currently is set up to use TruSeq3-PE-2.fa and trimmomatic-0.39.jar.
  # e. This program.
  # f. No other files with these extensions or labels!
  # * All of these files can be labeled with other information, so long as they also adhere to these conditions. 
@@ -26,6 +26,7 @@
   	# genomefile_fish.fasta
   	# assemblyannotation_fish.gff
   	# TruSeq3-PE-2.fa
+    	# trimmomatic-0.39.jar
  # Important:
    	# This program calculates the number of processing units available, and uses 2 less than 50%. If you would like to changes this alter $PARALLEL_JOBS and/or $STAR_THREADS. 
 
