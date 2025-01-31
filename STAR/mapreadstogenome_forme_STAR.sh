@@ -252,11 +252,11 @@ run_countem_up() {
 main() {
     calculate_resources
     validate_inputs
-	  check_annotation
+    check_annotation
     prepare_files
     run_trimmomatic
     run_STARindexbuild
-	  run_countem_up
+    run_countem_up
     echo "Done. Results are in $OUTPUT_DIR."
 }
 
