@@ -26,6 +26,8 @@
   	# genomefile_fish.fasta
   	# assemblyannotation_fish.gff
   	# TruSeq3-PE-2.fa
+ # Important:
+   	# This program calculates the number of processing units available, and uses 2 less than 50%. If you would like to changes this alter $PARALLEL_JOBS and/or $STAR_THREADS. 
 
 # --- Default Configurations ---
 DEFAULT_TRIMMOMATIC_JAR="./trimmomatic-0.39.jar"
@@ -101,8 +103,8 @@ done
 calculate_resources() {
     echo "Calculating system resources..."
     TOTAL_CPUS=$(nproc)
-    PARALLEL_JOBS=$((TOTAL_CPUS / 2)) 
-    STAR_THREADS=$((TOTAL_CPUS / 2)) 
+    PARALLEL_JOBS=$((TOTAL_CPUS / 2)-2) 
+    STAR_THREADS=$((TOTAL_CPUS / 2)-2) 
     if [[ $STAR_THREADS -lt 1 ]]; then STAR_THREADS=1; fi
     if [[ $PARALLEL_JOBS -lt 1 ]]; then PARALLEL_JOBS=1; fi
     echo "Using $PARALLEL_JOBS parallel jobs and $STAR_THREADS STAR threads."
