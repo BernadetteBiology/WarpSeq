@@ -131,7 +131,7 @@ track_progress() {
 # Validate required tools and input files
 validate_inputs() {
     echo "Validating inputs..."
-    required_tools=("java" "STAR" "samtools" "stringtie" "gffread" "parallel")
+    required_tools=("java" "STAR" "parallel")
     for tool in "${required_tools[@]}"; do
         if ! command -v "$tool" &>/dev/null; then
             echo "Error: $tool is not installed or not in PATH." >&2
