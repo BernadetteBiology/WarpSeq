@@ -13,13 +13,13 @@
 	#  a3. forward and reverse reads should be labeled the exact same apart from R1 or R2.
  # b. The reference genome/chromosome level assembly with a "genome.fna" or "genome.fasta" extension.
  # c. Optional: A chromosome level assembly annotation file with a ".gff" or ".gtf" extension. 
- # d. The adapter and jar file from Trimmomatic. This program currently is set up to use TruSeq3-PE-2.fa and trimmomatic-0.39.jar (but this can be changed).
+ # d. The adapter file from Trimmomatic. This program currently is set up to use TruSeq3-PE-2.fa.
  # e. The prepDE.py3 script from StringTie.
  # f. This program.
  # g. No other files with these extensions or labels!
  # * All of these files can be labeled with other information, so long as they also adhere to these conditions. 
  # Example contents of a current directory:
-  	# mapreadstogenome_forme_STAR.sh
+  	# mapreadstogenome_forme_HISAT2StringTie.sh
   	# Sample1_ATGCA_fish_R1.fastq
   	# Sample1_ATGCA_fish_R2.fastq
   	# Sample2_GTAGA_fish_R1.fastq
@@ -28,9 +28,8 @@
   	# assemblyannotation_fish.gff (optional)
   	# TruSeq3-PE-2.fa
 	# prepDE.py3
- 	# trimmomatic-0.39.jar
  # Important:
-   	# This program calculates the number of processing units available, and uses 2 less than 50%. If you would like to changes this alter $PARALLEL_JOBS and/or $STAR_THREADS. 
+   	# This program calculates the number of processing units available, and uses 2 less than 50%. If you would like to changes this alter $PARALLEL_JOBS and/or $HISAT2_THREADS. 
 
 
 # --- Default Configurations ---
@@ -48,8 +47,8 @@ usage() {
     echo "Options:"
     echo "  -t, --trimmomatic PATH    Path to Trimmomatic JAR file (default: $DEFAULT_TRIMMOMATIC_JAR)"
     echo "  -i, --illumina            Trimmomatic adapter clip parameters (default: $DEFAULT_ILLUMINACLIP)"
-    echo "  -r, --trim                Trimmomatic trimming parameters (default: $DEFAULT_TRIM_OPTS)"
-    echo "  -g, --genome-dir DIR      Directory (output) for STAR genome index (default: $DEFAULT_GENOME_DIR)"
+	echo "  -r, --trim                Trimmomatic trimming parameters (default: $DEFAULT_TRIM_OPTS)"
+    echo "  -g, --genome-dir DIR      Directory (output) for HISAT2 genome index (default: $DEFAULT_GENOME_DIR)"
     echo "  -o, --output-dir DIR      Directory (output) for output files (default: $DEFAULT_OUTPUT_DIR)"
     echo "  -l, --log-dir DIR         Directory for log files (default: $DEFAULT_LOG_DIR)"
     echo "  -h, --help                Display this help message"
@@ -108,10 +107,10 @@ calculate_resources() {
     echo "Calculating system resources..."
     TOTAL_CPUS=$(nproc)
     PARALLEL_JOBS=$((((TOTAL_CPUS / 2))-2)) 
-    STAR_THREADS=$((((TOTAL_CPUS / 2))-2)) 
-    if [[ $STAR_THREADS -lt 1 ]]; then STAR_THREADS=1; fi
+    HISAT2_THREADS=$((((TOTAL_CPUS / 2))-2)) 
+    if [[ $HISAT2_THREADS -lt 1 ]]; then HISAT2_THREADS=1; fi
     if [[ $PARALLEL_JOBS -lt 1 ]]; then PARALLEL_JOBS=1; fi
-    echo "Using $PARALLEL_JOBS parallel jobs and $STAR_THREADS STAR threads."
+    echo "Using $PARALLEL_JOBS parallel jobs and $HISAT2_THREADS threads."
 }
 
 # --- Functions ---
@@ -186,7 +185,7 @@ run_trimmomatic() {
 # HISAT2 wrapper for parallel execution
 hisat2_process() {
     local base="$1"
-    hisat2 --dta -x "$GENOME_DIR/genome_index" -1 "${OUTPUT_DIR}/${base}_R1_paired.fastq" -2 "${OUTPUT_DIR}/${base}_R2_paired.fastq" -S "${OUTPUT_DIR}/${base}.sam" -p "$HISAT2_THREADS"&>> "$LOG_DIR/HISAT2_${base}.log"
+    hisat2 --dta -x "$GENOME_DIR/genome_index" -1 "${OUTPUT_DIR}/${base}_R1_paired.fastq" -2 "${OUTPUT_DIR}/${base}_R2_paired.fastq" -S "${OUTPUT_DIR}/${base}.sam" -p "$HISAT2_THREADS" &>> "$LOG_DIR/HISAT2_${base}.log"
 }
 
 # Run HISAT2 in parallel, start by building index
@@ -203,13 +202,13 @@ run_hisat2() {
 
     cp "$genome_file" "$GENOME_DIR/"
     
-	hisat2-build "$GENOME_DIR/$(basename "$genome_file")" "$GENOME_DIR/genome_index" &>> "$LOG_DIR/HISAT2_build.log"
+	#hisat2-build "$GENOME_DIR/$(basename "$genome_file")" "$GENOME_DIR/genome_index" &>> "$LOG_DIR/HISAT2_build.log"
 
     local total_samples=$(wc -l < "$TEMP_DIR/basenamereads.txt")
     export -f hisat2_process
     export GENOME_DIR OUTPUT_DIR LOG_DIR HISAT2_THREADS
     parallel -j "$PARALLEL_JOBS" hisat2_process ::: $(cat "$TEMP_DIR/basenamereads.txt")
-	track_progress "$total_samples" "HISAT2 alignments"
+	#track_progress "$total_samples" "HISAT2 alignments"
     echo "Completed HISAT2." 
 }
 
@@ -367,13 +366,13 @@ main() {
     calculate_resources
     validate_inputs
     prepare_files
-    run_trimmomatic
+	#run_trimmomatic
     run_hisat2
-    convert_process
+	convert_process
     process_bam_files
-    check_gff_and_convert
+	check_gff_and_convert
     run_stringtie
-    run_stringtie_merge
+	run_stringtie_merge
     run_stringtie_after_merge
     generate_counts_table
     cleanup_and_organize
