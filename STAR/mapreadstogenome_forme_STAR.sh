@@ -2,10 +2,9 @@
 
 # Author: Bernadette Johnson 
 # Created: 13 August 2019
-# Last Updated: 30 January 2024
 # Purpose: Pipeline for aligning paired end RNAseq reads to a genome and quantifying, with options for user-defined or default configurations, and progress tracking.
-# Pipeline: Trimmomatic > STAR
-# Requirements (Pre-req programs): Trimmomatic, STAR
+# Pipeline: Trimmomatic > FASTQC & MULTIQC > STAR
+# Requirements (Pre-req programs): Trimmomatic, FastQC, MultiQC, STAR
 # Requirements (In directory): 	
   # a. Reads in .fastq format:
 	#  a1. forward reads labeled with the ending "_R1.fastq"
@@ -29,6 +28,8 @@
     	# trimmomatic-0.39.jar
  # Important:
    	# This program calculates the number of processing units available, and uses 2 less than 50%. If you would like to changes this alter $PARALLEL_JOBS and/or $STAR_THREADS. 
+    	# This program proceeds without checking quality of read trimming after generation of QC files.
+     	# This program is somewhat modular. If you would like to only run certain parts of the pipeline, you can comment out (#) functions in the main() script execution function. Essential functions that should not be commented out include calculate_resources, validate_inputs, prepare_files.
 
 # --- Default Configurations ---
 DEFAULT_TRIMMOMATIC_JAR="./trimmomatic-0.39.jar"
@@ -205,6 +206,25 @@ run_trimmomatic() {
     echo "Completed Trimmomatic."
 }
 
+# FastQC after trimming
+run_fastqc() {
+    mkdir -p "${OUTPUT_DIR}/fastQC"
+    cd "${OUTPUT_DIR}/fastQC"
+    echo "Running FastQC for each sample after trimming..."
+    fastqc *.fastq
+    cd ..
+    echo "Completed FastQC."
+}
+
+# MultiQC after FastQC
+run_multiqc() {
+    cd "${OUTPUT_DIR}/fastQC"
+    echo "Running MultiQC after FastQC..."
+    multiqc .
+    cd ..
+    echo "Completed MultiQC. Please check quality of trim."
+}
+
 # Run STAR in parallel, start by building index
 run_STARindexbuild() {
     echo "Starting STAR..."
@@ -256,6 +276,8 @@ main() {
     check_annotation
     prepare_files
     run_trimmomatic
+    run_fastqc
+    run_multiqc
     run_STARindexbuild
     run_countem_up
     echo "Done. Results are in $OUTPUT_DIR."
