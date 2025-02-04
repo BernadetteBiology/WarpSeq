@@ -375,14 +375,25 @@ generate_counts_table() {
 # Cleanup and organize outputs
 cleanup_and_organize() {
     echo "Organizing outputs..."
-    mkdir -p "$OUTPUT_DIR/sorted_bam"
-    mv "$OUTPUT_DIR/"*_sorted.bam "$OUTPUT_DIR/sorted_bam/"
+    
+    mkdir -p "$OUTPUT_DIR/03_sorted_bam"
+    mv "$OUTPUT_DIR/"*_sorted.bam "$OUTPUT_DIR/03_sorted_bam/"
+    
     rm -rf "$TEMP_DIR"
+    
     rm "$OUTPUT_DIR/"*.sam
-    mkdir -p "$OUTPUT_DIR/bam"
-    mv "$OUTPUT_DIR/"*.bam "$OUTPUT_DIR/bam/"
-    mkdir -p "$OUTPUT_DIR/trimmed_paired_reads"
-    mv "$OUTPUT_DIR/"*_paired.fastq "$OUTPUT_DIR/trimmed_paired_reads/"
+    
+    mkdir -p "$OUTPUT_DIR/02_bam"
+    mv "$OUTPUT_DIR/"*.bam "$OUTPUT_DIR/02_bam/"
+    
+    mkdir -p "$OUTPUT_DIR/01_trimmed_paired_reads"
+    mv "$OUTPUT_DIR/"*_paired.fastq "$OUTPUT_DIR/01_trimmed_paired_reads/"
+    
+    mkdir -p raw_reads
+    mv *.fastq raw_reads
+    
+    mv "$OUTPUT_DIR/stringtie" "$OUTPUT_DIR/04_stringtie"
+    
     echo "Output files organized."
 }
 
