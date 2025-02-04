@@ -12,16 +12,16 @@ WarpSeq is a collection of streamlined Bash scripts designed to automate RNA-seq
   ✅ No installation needed – just download and run.  
 
 
-## 🤖 Pipelines
+## Pipelines 🤖  
 ### For bulk RNA-seq datasets:
   ✅ Align and quantify with STAR (Trimmomatic > STAR)  
   ✅ Align with HISAT2 and quantify with StringTie (Trimmomatic > HISAT2 > STRINGTIE)  
 
-## 🔧 Dependencies  
+## Dependencies 🔧  
   
 WarpSeq relies on external programs. Ensure they are installed and accessible in your $PATH before running. Exact dependencies depend on the pipeline you would like to run, and can be found in the ReadMe section at the head of each Bash script. WarpSeq will automatically check for these dependencies before running and alert you if anything is missing.
 
-## 🚀 Quick Start  
+## Quick Start 🚀  
   
 ### 1. Download 
 ```
@@ -96,10 +96,7 @@ DEFAULT_LOG_DIR="./logs"
 -h, --help                Display this help message"
 ```
 
-### 🛠️ Contributions & Bug Reports  
-WarpSeq is in active development, and I’d love to improve it based on your feedback!   
-
-### 📬 Contact  
+## Contact 📬  
 For questions or feedback, feel free to reach out:  
 Author: Bernadette Johnson  
 Email: bernadettejohnson[@]zoology.ubc.ca  
