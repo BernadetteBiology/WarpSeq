@@ -47,7 +47,7 @@ usage() {
     echo "Options:"
     echo "  -t, --trimmomatic PATH    Path to Trimmomatic JAR file (default: $DEFAULT_TRIMMOMATIC_JAR)"
     echo "  -i, --illumina            Trimmomatic adapter clip parameters (default: $DEFAULT_ILLUMINACLIP)"
-	echo "  -r, --trim                Trimmomatic trimming parameters (default: $DEFAULT_TRIM_OPTS)"
+    echo "  -r, --trim                Trimmomatic trimming parameters (default: $DEFAULT_TRIM_OPTS)"
     echo "  -g, --genome-dir DIR      Directory (output) for HISAT2 genome index (default: $DEFAULT_GENOME_DIR)"
     echo "  -o, --output-dir DIR      Directory (output) for output files (default: $DEFAULT_OUTPUT_DIR)"
     echo "  -l, --log-dir DIR         Directory for log files (default: $DEFAULT_LOG_DIR)"
