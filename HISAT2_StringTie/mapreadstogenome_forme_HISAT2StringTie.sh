@@ -189,7 +189,7 @@ run_fastqc() {
     mkdir -p "${OUTPUT_DIR}/fastQC"
     cd "${OUTPUT_DIR}/fastQC"
     echo "Running FastQC for each sample after trimming..."
-    fastqc *.fastq
+    fastqc "${OUTPUT_DIR}/*_paired.fastq"
     cd ..
     echo "Completed FastQC."
 }
