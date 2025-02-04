@@ -2,10 +2,10 @@
 
 # Author: Bernadette Johnson 
 # Created: 13 August 2019
-# Last Updated: 31 January 2024
+
 # Purpose: Pipeline for aligning paired end RNAseq reads to a genome and quantifying, with options for user-defined or default configurations, and progress tracking.
-# Pipeline: Trimmomatic > HISAT2 > STRINGTIE
-# Requirements (Pre-req programs): Trimmomatic, HISAT2, STRINGTIE, SAMTOOLS, GFFREAD, PARALLEL, DOS2UNIX
+# Pipeline: Trimmomatic > FASTQC & MULTIQC > HISAT2 > STRINGTIE
+# Requirements (Pre-req programs): Trimmomatic, FASTQC, MULTIQC, HISAT2, STRINGTIE, SAMTOOLS, GFFREAD, PARALLEL, DOS2UNIX
 # Requirements (In directory): 	
   # a. Reads in .fastq format:
 	#  a1. forward reads labeled with the ending "_R1.fastq"
@@ -30,6 +30,8 @@
 	# prepDE.py3
  # Important:
    	# This program calculates the number of processing units available, and uses 2 less than 50%. If you would like to changes this alter $PARALLEL_JOBS and/or $HISAT2_THREADS. 
+    	# This program proceeds without checking quality of read trimming.
+     	# This program is somewhat modular. If you would like to only run certain parts of the pipeline, you can comment out (#) functions in the main() script execution function. Essential functions that should not be commented out include calculate_resources, validate_inputs, prepare_files.
 
 
 # --- Default Configurations ---
@@ -74,7 +76,7 @@ while [[ $# -gt 0 ]]; do
             ILLUMINACLIP="$2"
             shift 2
             ;;
-		-r|--trim)
+        -r|--trim)
             TRIM_OPTS="$2"
             shift 2
             ;;
@@ -133,7 +135,7 @@ track_progress() {
 # Validate required tools and input files
 validate_inputs() {
     echo "Validating inputs..."
-    required_tools=("java" "hisat2" "samtools" "stringtie" "gffread" "parallel" "dos2unix")
+    required_tools=("java" "hisat2" "samtools" "stringtie" "gffread" "parallel" "dos2unix" "fastqc" "multiqc")
     for tool in "${required_tools[@]}"; do
         if ! command -v "$tool" &>/dev/null; then
             echo "Error: $tool is not installed or not in PATH." >&2
@@ -182,6 +184,25 @@ run_trimmomatic() {
     echo "Completed Trimmomatic."
 }
 
+# FastQC after trimming
+run_fastqc() {
+    mkdir -p "${OUTPUT_DIR}/fastQC"
+    cd "${OUTPUT_DIR}/fastQC"
+    echo "Running FastQC for each sample after trimming..."
+    fastqc *.fastq
+    cd ..
+    echo "Completed FastQC."
+}
+
+# MultiQC after FastQC
+run_multiqc() {
+    cd "${OUTPUT_DIR}/fastQC"
+    echo "Running MultiQC after FastQC..."
+    multiqc .
+    cd ..
+    echo "Completed MultiQC. Please check quality of trim."
+}
+
 # HISAT2 wrapper for parallel execution
 hisat2_process() {
     local base="$1"
@@ -202,13 +223,12 @@ run_hisat2() {
 
     cp "$genome_file" "$GENOME_DIR/"
     
-	#hisat2-build "$GENOME_DIR/$(basename "$genome_file")" "$GENOME_DIR/genome_index" &>> "$LOG_DIR/HISAT2_build.log"
+    hisat2-build "$GENOME_DIR/$(basename "$genome_file")" "$GENOME_DIR/genome_index" &>> "$LOG_DIR/HISAT2_build.log"
 
     local total_samples=$(wc -l < "$TEMP_DIR/basenamereads.txt")
     export -f hisat2_process
     export GENOME_DIR OUTPUT_DIR LOG_DIR HISAT2_THREADS
     parallel -j "$PARALLEL_JOBS" hisat2_process ::: $(cat "$TEMP_DIR/basenamereads.txt")
-	#track_progress "$total_samples" "HISAT2 alignments"
     echo "Completed HISAT2." 
 }
 
@@ -220,7 +240,7 @@ convert_process() {
 # SAM to BAM and sorting using Samtools
 bam_process() {
     local base="$1"
-	samtools view -b -S "${OUTPUT_DIR}/${base}.sam" > "${OUTPUT_DIR}/${base}.bam"
+    samtools view -b -S "${OUTPUT_DIR}/${base}.sam" > "${OUTPUT_DIR}/${base}.bam"
     samtools sort "${OUTPUT_DIR}/${base}.bam" -o "${OUTPUT_DIR}/${base}_sorted.bam"
     #rm "${OUTPUT_DIR}/${base}.sam" "${OUTPUT_DIR}/${base}.bam"
 	}
@@ -350,7 +370,6 @@ generate_counts_table() {
 
     python3 prepDE.py3 -i sample_lst.txt
     echo "Counts matrix generated."
-
 }
 
 # Cleanup and organize outputs
@@ -359,7 +378,23 @@ cleanup_and_organize() {
     mkdir -p "$OUTPUT_DIR/sorted_bam"
     mv "$OUTPUT_DIR/"*_sorted.bam "$OUTPUT_DIR/sorted_bam/"
     rm -rf "$TEMP_DIR"
+    rm "$OUTPUT_DIR/"*.sam
+    mkdir -p "$OUTPUT_DIR/bam"
+    mv "$OUTPUT_DIR/"*.bam "$OUTPUT_DIR/bam/"
+    mkdir -p "$OUTPUT_DIR/trimmed_paired_reads"
+    mv "$OUTPUT_DIR/"*_paired.fastq "$OUTPUT_DIR/trimmed_paired_reads/"
     echo "Output files organized."
+}
+
+run_cleanup() {
+    echo "Checking for the generation of Gene Count Matrix..."
+    if ls gene_count_matrix.csv &> /dev/null; then
+        echo "Found Gene Count Matrix file. Cleaning up and reorganizing output files..."
+	cleanup_and_organize
+    else
+        echo "No Gene Count Matrix file found. Not cleaning up."
+        exit 1
+    fi
 }
 
 # --- Main Script Execution ---
@@ -367,16 +402,18 @@ main() {
     calculate_resources
     validate_inputs
     prepare_files
-	#run_trimmomatic
+    run_trimmomatic
+    run_fastqc
+    run_multiqc
     run_hisat2
-	convert_process
+    convert_process
     process_bam_files
-	check_gff_and_convert
+    check_gff_and_convert
     run_stringtie
-	run_stringtie_merge
+    run_stringtie_merge
     run_stringtie_after_merge
     generate_counts_table
-    cleanup_and_organize
+    run_cleanup
     echo "Pipeline completed. Results are in $OUTPUT_DIR."
 }
 
