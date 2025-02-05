@@ -287,7 +287,7 @@ run_stringtie() {
             stringtie "${OUTPUT_DIR}/${sample}_sorted.bam" \
                 -o "${output_dir}/${sample}_gtf.gtf" \
                 -A "${output_dir}/${sample}_abund.tab" \
-                -p "$HISAT2_THREADS" &>> "$LOG_DIR/StringTie_${base}.log"
+                -p "$HISAT2_THREADS" &>> "$LOG_DIR/StringTie_${sample}.log"
         fi
     done < "$TEMP_DIR/basenamereads.txt"
     echo "StringTie assembly completed."
@@ -345,7 +345,7 @@ run_stringtie_after_merge() {
             -G "${output_dir}/merged_transcripts.gff" \
             -A "${output_dir}/${sample}/${sample}_abund_merged.tab" \
             -C "${output_dir}/${sample}/${sample}_cov_refs_merged.gtf"
-    done < "$TEMP_DIR/basenamereads.txt"  &>> "$LOG_DIR/StringTieAfterMerge_${base}.log"
+    done < "$TEMP_DIR/basenamereads.txt"  
     echo "Completed StringTie after merge."
 }
 
