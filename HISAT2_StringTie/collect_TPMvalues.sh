@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Pull abundance merged tab files
+# After running mapreadstogenome_forme_HISAT2StringTie.sh, this script pulls TPM values from the abundance merged tab files and saves them in a CSV file. 
 
 mkdir -p ./results/merged_TPM_all
 
