@@ -162,6 +162,8 @@ prepare_files() {
     ls *R1.fastq > "$TEMP_DIR/forwardreads.txt"
     ls *R2.fastq > "$TEMP_DIR/reversereads.txt"
     sed 's/_R1.fastq//' "$TEMP_DIR/forwardreads.txt" > "$TEMP_DIR/basenamereads.txt"
+    cd ${TEMP_DIR}
+    dos2unix basenamereads.txt
 }
 
 # Trimmomatic wrapper for parallel execution
@@ -187,32 +189,26 @@ run_trimmomatic() {
 
 # FastQC after trimming
 run_fastqc() {
-	echo "Running FastQC for each sample after trimming..."
+    echo "Running FastQC for each sample after trimming..."
     cd ${OUTPUT_DIR}
     mkdir -p QC_after_trim
-	fastqc *paired.fastq -o QC_after_trim
+    fastqc *paired.fastq -o QC_after_trim
     cd ..
-	echo "Completed FastQC."
+    echo "Completed FastQC."
 }
 
 # MultiQC after FastQC
 run_multiqc() {
-    cd "${OUTPUT_DIR}/fastQC"
+    cd "${OUTPUT_DIR}/QC_after_trim"
     echo "Running MultiQC after FastQC..."
     multiqc ./
     cd ..
     echo "Completed MultiQC. Please check quality of trim."
 }
 
-# HISAT2 wrapper for parallel execution
-hisat2_process() {
-    local base="$1"
-    hisat2 --dta -x "$GENOME_DIR/genome_index" -1 "${OUTPUT_DIR}/${base}_R1_paired.fastq" -2 "${OUTPUT_DIR}/${base}_R2_paired.fastq" -S "${OUTPUT_DIR}/${base}.sam" -p "$HISAT2_THREADS" &>> "$LOG_DIR/HISAT2_${base}.log"
-}
-
-# Run HISAT2 in parallel, start by building index
-run_hisat2() {
-    echo "Starting HISAT2..."
+# Build index for HISAT2
+hisat2_index() {
+echo "Starting HISAT2..."
     mkdir -p "$GENOME_DIR"
     local genome_file
     genome_file=$(find . -name "*genome.fna" -o -name "*genome.fasta" | head -n 1)
@@ -225,13 +221,19 @@ run_hisat2() {
     cp "$genome_file" "$GENOME_DIR/"
     
     hisat2-build "$GENOME_DIR/$(basename "$genome_file")" "$GENOME_DIR/genome_index" &>> "$LOG_DIR/HISAT2_build.log"
-
-    local total_samples=$(wc -l < "$TEMP_DIR/basenamereads.txt")
-    export -f hisat2_process
-    export GENOME_DIR OUTPUT_DIR LOG_DIR HISAT2_THREADS
-    parallel -j "$PARALLEL_JOBS" hisat2_process ::: $(cat "$TEMP_DIR/basenamereads.txt")
-    echo "Completed HISAT2." 
 }
+
+# Align each sample file to genome index using HISAT2
+run_hisat2() {
+	mkdir -p "${OUTPUT_DIR}/stringtie"
+	
+    while read -r sample; do
+	    hisat2 --dta -x "$GENOME_DIR/genome_index" -1 "${OUTPUT_DIR}/${sample}_R1_paired.fastq" -2 "${OUTPUT_DIR}/${sample}_R2_paired.fastq" -S "${OUTPUT_DIR}/${sample}.sam" -p "$HISAT2_THREADS" &>> "$LOG_DIR/HISAT2_${sample}.log"
+	done < "$TEMP_DIR/basenamereads.txt"
+	
+	echo "Completed HISAT2." 
+}
+
 
 # Reformat output
 convert_process() {
@@ -417,6 +419,7 @@ main() {
     run_trimmomatic
     run_fastqc
     run_multiqc
+    hisat2_index
     run_hisat2
     convert_process
     process_bam_files
