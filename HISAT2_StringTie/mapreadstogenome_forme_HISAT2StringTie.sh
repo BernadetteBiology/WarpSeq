@@ -28,6 +28,7 @@
   	# assemblyannotation_fish.gff (optional)
   	# TruSeq3-PE-2.fa
 	# prepDE.py3
+ 	# trimmomatic-0.39.jar
  # Important:
    	# This program calculates the number of processing units available, and uses 2 less than 50%. If you would like to changes this alter $PARALLEL_JOBS and/or $HISAT2_THREADS. 
     	# This program proceeds without checking quality of read trimming.
@@ -186,19 +187,19 @@ run_trimmomatic() {
 
 # FastQC after trimming
 run_fastqc() {
-    mkdir -p "${OUTPUT_DIR}/fastQC"
-    cd "${OUTPUT_DIR}/fastQC"
-    echo "Running FastQC for each sample after trimming..."
-    fastqc "${OUTPUT_DIR}/*_paired.fastq"
+	echo "Running FastQC for each sample after trimming..."
+    cd ${OUTPUT_DIR}
+    mkdir -p QC_after_trim
+	fastqc *paired.fastq -o QC_after_trim
     cd ..
-    echo "Completed FastQC."
+	echo "Completed FastQC."
 }
 
 # MultiQC after FastQC
 run_multiqc() {
     cd "${OUTPUT_DIR}/fastQC"
     echo "Running MultiQC after FastQC..."
-    multiqc .
+    multiqc ./
     cd ..
     echo "Completed MultiQC. Please check quality of trim."
 }
