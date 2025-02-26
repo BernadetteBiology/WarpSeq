@@ -310,7 +310,8 @@ run_stringtie_merge() {
 		
 	fi
 	
-	cd ..
+	cd ../..
+ 
     echo "StringTie merge completed: merged_transcripts.gff"
 }
 
