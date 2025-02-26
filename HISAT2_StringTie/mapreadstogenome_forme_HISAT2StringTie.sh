@@ -281,13 +281,17 @@ run_stringtie_merge() {
     # Generate a list of GTF files
     cd "${OUTPUT_DIR}/stringtie"
 	ls *.gtf > gtf_names.txt
-
 	
     if $USE_ANNOTATION; then
-		# Update `gtf_names.txt` with required formatting
+		
+		# Append a backslash at the end of each line
 		sed -i 's/$/ \\/' gtf_names.txt
-		sed -i '1s/^/stringtie --merge -G "${GENOME_DIR}/annotatedgenome_gffread.gff3" \\\n-o merged_transcripts.gff \\\n/' gtf_names.txt
-		sed -i '$ s/\\//g' gtf_names.txt
+		
+		# Prepend the path to stringtie
+		sed -i "s|^|$thesisko/stringtie/|" gtf_names.txt
+		
+		# Insert path variable and stringtie command at the beginning
+		sed -i '1s/^/thesisko="${0%\/*}"\nstringtie --merge -G "${GENOME_DIR}/annotatedgenome_gffread.gff3"  \\\n-o merged_transcripts.gff \\\n/' gtf_names.txt
 
 		# Run the merge command
 		bash gtf_names.txt
@@ -295,10 +299,15 @@ run_stringtie_merge() {
 		date
 
 	else
-		# Update `gtf_names.txt` with required formatting
+		
+		# Append a backslash at the end of each line
 		sed -i 's/$/ \\/' gtf_names.txt
-		sed -i '1s/^/stringtie --merge \\\n-o merged_transcripts.gff \\\n/' gtf_names.txt
-		sed -i '$ s/\\//g' gtf_names.txt
+
+		# Prepend the path to stringtie
+		sed -i "s|^|$thesisko/stringtie/|" gtf_names.txt
+
+		# Insert path variable and stringtie command at the beginning
+		sed -i '1s/^/thesisko="${0%\/*}"\nstringtie --merge \\\n-o merged_transcripts.gff \\\n/' gtf_names.txt
 
 		# Run the merge command
 		bash gtf_names.txt
