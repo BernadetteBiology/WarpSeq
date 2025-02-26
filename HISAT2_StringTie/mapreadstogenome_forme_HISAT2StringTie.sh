@@ -288,7 +288,7 @@ run_stringtie_merge() {
 		sed -i 's/$/ \\/' gtf_names.txt
 		
 		# Prepend the path to stringtie
-		sed -i "s|^|$thesisko/stringtie/|" gtf_names.txt
+		sed -i 's+^+"$thesisko"/stringtie/+' gtf_names.txt
 		
 		# Insert path variable and stringtie command at the beginning
 		sed -i '1s/^/thesisko="${0%\/*}"\nstringtie --merge -G "${GENOME_DIR}/annotatedgenome_gffread.gff3"  \\\n-o merged_transcripts.gff \\\n/' gtf_names.txt
@@ -304,7 +304,7 @@ run_stringtie_merge() {
 		sed -i 's/$/ \\/' gtf_names.txt
 
 		# Prepend the path to stringtie
-		sed -i "s|^|$thesisko/stringtie/|" gtf_names.txt
+		sed -i 's+^+"$thesisko"/stringtie/+' gtf_names.txt
 
 		# Insert path variable and stringtie command at the beginning
 		sed -i '1s/^/thesisko="${0%\/*}"\nstringtie --merge \\\n-o merged_transcripts.gff \\\n/' gtf_names.txt
