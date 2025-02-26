@@ -336,7 +336,6 @@ run_stringtie_merge() {
 
 # StringTie after merge for each sample
 run_stringtie_after_merge() {
-    dos2unix "$TEMP_DIR/basenamereads.txt"
     echo "Running StringTie after merge for each sample..."
     while read -r sample; do
         echo "Processing sample: $sample"
