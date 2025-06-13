@@ -1,21 +1,21 @@
 # WarpSeq
 
-## Effortless RNA-Seq Analysis with Pre-Built Pipelines 🧬🚀
+## Effortless RNA-Seq Analysis with Pre-Built Pipelines 
 
 WarpSeq is a collection of streamlined Bash scripts designed to automate RNA-seq analysis using widely accepted bioinformatics programs. If you're a researcher, bioinformatician, or graduate student who already knows about programs like Trimmomatic, HISAT2, StringTie, and STAR, but don’t want to write your own pipeline from scratch—WarpSeq is for you. WarpSeq does NOT analyze your data in a novel way — it simply provides a structured pipeline to run existing tools efficiently.
 
 ## 🔑 Key Features
-  ✅ Automates RNA-seq processing – from raw reads to quantification.  
-  ✅ Uses well-documented tools – no new algorithms, just a structured pipeline.  
-  ✅ Customizable – modify parameters to suit your analysis needs.  
-  ✅ Parallelized Execution – optimizes processing speed based on system resources.  
-  ✅ No installation needed – just download and run.  
+- Automates RNA-seq processing – from raw reads to quantification.  
+- Uses well-documented tools – no new algorithms, just a structured pipeline.  
+- Customizable – modify parameters to suit your analysis needs.  
+- Parallelized Execution – optimizes processing speed based on system resources.  
+- No installation needed – just download and run.  
 
 
 ## 🤖 Pipelines  
 ### For bulk RNA-seq datasets:
-  ✅ Align and quantify with STAR (Trimmomatic > STAR)  
-  ✅ Align with HISAT2 and quantify with StringTie (Trimmomatic > HISAT2 > STRINGTIE)  
+- Align and quantify with STAR (Trimmomatic > STAR)  
+- Align with HISAT2 and quantify with StringTie (Trimmomatic > HISAT2 > STRINGTIE)  
 
 ## 🔧 Dependencies  
   
