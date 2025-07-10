@@ -24,7 +24,7 @@
   	# Sample1_ATGCA_fish_R2.fastq
   	# Sample2_GTAGA_fish_R1.fastq
   	# Sample2_GTAGA_fish_R2.fastq
-  	# genomefile_fish.fasta
+  	# GCAfish_genome.fasta
   	# assemblyannotation_fish.gff (optional)
   	# TruSeq3-PE-2.fa
 	# prepDE.py3
