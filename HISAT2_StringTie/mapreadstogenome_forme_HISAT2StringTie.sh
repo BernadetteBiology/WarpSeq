@@ -6,6 +6,8 @@
 # Purpose: Pipeline for aligning paired end RNAseq reads to a genome and quantifying, with options for user-defined or default configurations, and progress tracking.
 # Pipeline: Trimmomatic > HISAT2 > STRINGTIE
 # Requirements (Pre-req programs): Trimmomatic, HISAT2, STRINGTIE, SAMTOOLS, GFFREAD, PARALLEL, DOS2UNIX
+	# Programs should be accessible from local directory (i.e. in your PATH).
+ 	# This program currently runs Trimmomatic with these settings: ILLUMINACLIP:TruSeq3-PE-2.fa:2:30:10:2:keepBothReads LEADING:3 TRAILING:3 MINLEN:75. This can be changed in Default Configurations below.
 # Requirements (In directory): 	
   # a. Reads in .fastq format:
 	#  a1. forward reads labeled with the ending "_R1.fastq"
@@ -13,7 +15,7 @@
 	#  a3. forward and reverse reads should be labeled the exact same apart from R1 or R2.
  # b. The reference genome/chromosome level assembly with a "genome.fna" or "genome.fasta" extension.
  # c. Optional: A chromosome level assembly annotation file with a ".gff" or ".gtf" extension. 
- # d. The adapter file from Trimmomatic. This program currently is set up to use TruSeq3-PE-2.fa.
+ # d. The adapter file from Trimmomatic. (This program currently is set up to use TruSeq3-PE-2.fa.)
  # e. The prepDE.py3 script from StringTie.
  # f. This program.
  # g. No other files with these extensions or labels!
@@ -28,8 +30,9 @@
   	# assemblyannotation_fish.gff (optional)
   	# TruSeq3-PE-2.fa
 	# prepDE.py3
- # Important:
+ # Important (PLEASE READ):
    	# This program calculates the number of processing units available, and uses 2 less than 50%. If you would like to changes this alter $PARALLEL_JOBS and/or $HISAT2_THREADS. 
+    	# Please check the Default Configurations below to make sure the settings are appropriate for your files.
 
 
 # --- Default Configurations ---
@@ -371,13 +374,13 @@ main() {
     calculate_resources
     validate_inputs
     prepare_files
-	#run_trimmomatic
+    run_trimmomatic
     run_hisat2
-	convert_process
+    convert_process
     process_bam_files
-	check_gff_and_convert
+    check_gff_and_convert
     run_stringtie
-	run_stringtie_merge
+    run_stringtie_merge
     run_stringtie_after_merge
     generate_counts_table
     cleanup_and_organize
