@@ -33,8 +33,8 @@ cd WarpSeq
 
 For the RNA-seq pipelines, ensure you have the following files in your working directory: 
 - RNA-seq reads (*_R1.fastq, *_R2.fastq)  
-- Reference genome (.fna or .fasta)  
-- Annotation file (.gff) (_Required_ for STAR pipeline, _Optional_ for HISAT2 > Stringtie pipeline)  
+- Reference genome (*genome.fna or *genome.fasta)  
+- Annotation file (*.gff) (_Required_ for STAR pipeline, _Optional_ for HISAT2 > Stringtie pipeline)  
 - Trimmomatic Illumina adapter sequences (default is TruSeq3-PE-2.fa)  
 - Stringtie read count script prepDE.py3 (_Required_ for HISAT2 > Stringtie pipeline only)  
 
