@@ -13,6 +13,7 @@
 	#  a1. forward reads labeled with the ending "_R1.fastq"
 	#  a2. reverse reads labeled with the ending "_R2.fastq"
 	#  a3. forward and reverse reads should be labeled the exact same apart from R1 or R2.
+ 	# Please see rename_SRAfastqs.sh, to help rename if applicable.
  # b. The reference genome/chromosome level assembly with a "genome.fna" or "genome.fasta" extension.
  # c. Optional: A chromosome level assembly annotation file with a ".gff" or ".gtf" extension. 
  # d. The adapter file from Trimmomatic. (This program currently is set up to use TruSeq3-PE-2.fa.)
