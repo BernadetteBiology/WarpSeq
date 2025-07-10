@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# If you download files from the SRA database, they usually end in SRR00000000_1.fastq or SRR00000000_2.fastq. To quickly rename them to SRR00000000_R1.fastq or SRR00000000_R2.fastq use this script.
+# Before running mapreadstogenome_forme_HISAT2StringTie.sh, you may want to quickly change your sample names to the correct format. 
+# If you download files from the SRA database, they usually end in SRR00000000_1.fastq or SRR00000000_2.fastq. 
+# To quickly rename them to SRR00000000_R1.fastq or SRR00000000_R2.fastq use this script.
 
 # Set to 1 to preview file changes (i.e. DRY_RUN=1), 0 to actually rename files (DRY_RUN=0)
 DRY_RUN=1
