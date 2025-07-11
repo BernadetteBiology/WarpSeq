@@ -206,7 +206,7 @@ run_hisat2() {
 
     cp "$genome_file" "$GENOME_DIR/"
     
-	#hisat2-build "$GENOME_DIR/$(basename "$genome_file")" "$GENOME_DIR/genome_index" &>> "$LOG_DIR/HISAT2_build.log"
+    hisat2-build "$GENOME_DIR/$(basename "$genome_file")" "$GENOME_DIR/genome_index" &>> "$LOG_DIR/HISAT2_build.log"
 
     local total_samples=$(wc -l < "$TEMP_DIR/basenamereads.txt")
     export -f hisat2_process
