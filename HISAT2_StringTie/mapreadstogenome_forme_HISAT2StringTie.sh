@@ -2,7 +2,7 @@
 
 # Author: Bernadette Johnson 
 # Created: 13 August 2019
-# Last Updated: 31 January 2024
+# Last Updated: 31 July 2025
 # Purpose: Pipeline for aligning paired end RNAseq reads to a genome and quantifying, with options for user-defined or default configurations, and progress tracking.
 # Pipeline: Trimmomatic > HISAT2 > STRINGTIE
 # Requirements (Pre-req programs): Trimmomatic, HISAT2, STRINGTIE, SAMTOOLS, GFFREAD, PARALLEL, DOS2UNIX
