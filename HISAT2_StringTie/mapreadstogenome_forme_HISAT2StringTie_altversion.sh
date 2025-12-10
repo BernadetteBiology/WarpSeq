@@ -24,7 +24,7 @@
   	# Sample1_ATGCA_fish_R2.fastq
   	# Sample2_GTAGA_fish_R1.fastq
   	# Sample2_GTAGA_fish_R2.fastq
-  	# fish_genome.fasta
+  	# fish_genomic.fasta
   	# assemblyannotation_fish.gff (optional)
   	# TruSeq3-PE-2.fa
 	  # trimmomatic-0.39.jar
@@ -198,7 +198,7 @@ run_hisat2() {
     echo "Starting HISAT2..."
     mkdir -p "$GENOME_DIR"
     local genome_file
-    genome_file=$(find . -name "*genome.fna" -o -name "*genome.fasta" | head -n 1)
+    genome_file=$(find . -name "*genomic.fna" -o -name "*genomic.fasta" | head -n 1)
 
     if [[ -z "$genome_file" ]]; then
         echo "Error: Reference genome not found (*.fna or *.fasta)." >&2
