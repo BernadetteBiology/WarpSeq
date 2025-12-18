@@ -111,12 +111,19 @@ done
 calculate_resources() {
     echo "Calculating system resources..."
     TOTAL_CPUS=$(nproc)
-    PARALLEL_JOBS=$((((TOTAL_CPUS / 2))-2)) 
-    HISAT2_THREADS=$((((TOTAL_CPUS / 2))-2)) 
-    if [[ $HISAT2_THREADS -lt 1 ]]; then HISAT2_THREADS=1; fi
-    if [[ $PARALLEL_JOBS -lt 1 ]]; then PARALLEL_JOBS=1; fi
-    echo "Using $PARALLEL_JOBS parallel jobs and $HISAT2_THREADS threads."
+
+    CPU_BUDGET=$(( TOTAL_CPUS - 2 ))
+    (( CPU_BUDGET < 1 )) && CPU_BUDGET=1
+
+    HISAT2_THREADS=4
+    (( HISAT2_THREADS > CPU_BUDGET )) && HISAT2_THREADS=$CPU_BUDGET
+
+    PARALLEL_JOBS=$(( CPU_BUDGET / HISAT2_THREADS ))
+    (( PARALLEL_JOBS < 1 )) && PARALLEL_JOBS=1
+
+    echo "TOTAL_CPUS=$TOTAL_CPUS CPU_BUDGET=$CPU_BUDGET PARALLEL_JOBS=$PARALLEL_JOBS HISAT2_THREADS=$HISAT2_THREADS total_threads=$((PARALLEL_JOBS*HISAT2_THREADS))"
 }
+
 
 # --- Functions ---
 
